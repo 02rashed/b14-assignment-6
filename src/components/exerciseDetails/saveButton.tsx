@@ -7,7 +7,10 @@ import { toast } from "react-toastify";
 
 const SaveButton = ({exercise} :{exercise:IExercise}) => {
 
-    const {saveLater, setLater} = useContext(ExerciseContext);
+    const {saveLater, setLater} = useContext(ExerciseContext) as {
+        saveLater: IExercise[];
+        setLater: React.Dispatch<React.SetStateAction<IExercise[]>>;
+    };
 
     const handleSaveExercise = ( ) => {
        setLater([...saveLater, exercise]) ;

@@ -7,7 +7,10 @@ import { toast } from "react-toastify";
 
 const AddButton = ({exercise} :{exercise:IExercise}) => {
 
-    const {addPlan, setPlan} = useContext(ExerciseContext);
+    const { addPlan, setPlan } = useContext(ExerciseContext) as {
+        addPlan: IExercise[];
+        setPlan: React.Dispatch<React.SetStateAction<IExercise[]>>;
+    };
 
     const handleAddExercise = ( ) => {
        setPlan([...addPlan, exercise]) ;
