@@ -1,19 +1,23 @@
 "use client";
-import React , {createContext,ReactNode ,useState} from 'react';
+import React, { createContext, ReactNode, useState } from 'react';
 
+export const ExerciseContext = createContext<any>({});
 
-export const ExerciseContext = createContext({});
+const ExercisesContext = ({ children }: { children: ReactNode }) => {
+  const [addPlan, setPlan] = useState<any[]>([]);
+  const [saveLater, setLater] = useState<any[]>([]);
 
-const ExercisesContex = ({ children} : {children:ReactNode}) => {
-    const[addPlan, setPlan] = useState([]);
-    const [saveLater, setLater] = useState([]);
+  // Correct function signature
+  const removePlan = (id: number) => {
+    setPlan((prev) => prev.filter((item) => item.id !== id));
+    setLater((prev) => prev.filter((item) => item.id !== id));
+  };
 
-    const sharedData = {
-        addPlan, setPlan, saveLater, setLater
-    }
-    return <ExerciseContext.Provider value={sharedData}>
-        { children }
+  return (
+    <ExerciseContext.Provider value={{ addPlan, setPlan, saveLater, setLater, removePlan }}>
+      {children}
     </ExerciseContext.Provider>
+  );
 };
 
-export default ExercisesContex;
+export default ExercisesContext;

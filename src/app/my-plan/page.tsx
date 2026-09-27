@@ -8,8 +8,15 @@ import { IExercise } from '@/components/types/exercises.type';
 const AddedExercises = () => {
   const { addPlan = [], saveLater = [], removePlan } = useContext(ExerciseContext);
   const [activeTab, setActiveTab] = useState<'today' | 'saved'>('today');
+  const [sortBy, setSortBy] = useState<"Duration" | "Calories" | "Name">("Duration");  
 
-  const currentList = activeTab === 'today' ? addPlan : saveLater;
+  // Tab selection with applied sorting logic
+  const rawList = activeTab === 'today' ? addPlan : saveLater;
+  const currentList = [...rawList].sort((a, b) => {
+    if (sortBy === 'Name') return String(a.name).localeCompare(String(b.name));
+    if (sortBy === 'Calories') return (Number(b.caloriesBurned) || 0) - (Number(a.caloriesBurned) || 0);
+    return (Number(a.duration) || 0) - (Number(b.duration) || 0);
+  });
 
   // Dynamic calculations for stats summary
   const totalExercises = currentList.length;
@@ -78,7 +85,7 @@ const AddedExercises = () => {
                   : 'text-[#8b919d] hover:text-white'
               }`}
             >
-              Today's Plan
+              Today&apos;s Plan
             </button>
             <button
               onClick={() => setActiveTab('saved')}
@@ -98,10 +105,14 @@ const AddedExercises = () => {
               Sort By
             </label>
             <div className="relative min-w-[200px]">
-              <select defaultValue="Duration" className="w-full bg-[#131418] text-white text-xs font-medium px-4 py-2.5 rounded-xl border border-zinc-800 appearance-none cursor-pointer pr-10 focus:outline-none focus:border-zinc-700">
-                <option value="Duration">Duration</option>
-                <option value="Calories">Calories</option>
-                <option value="Name">Name</option>
+              <select 
+                value={sortBy} 
+                onChange={(e) => setSortBy(e.target.value as "Duration" | "Calories" | "Name")}
+                className="w-full bg-[#131418] text-white text-xs font-medium px-4 py-2.5 rounded-xl border border-zinc-800 appearance-none cursor-pointer pr-10 focus:outline-none focus:border-zinc-700"
+              >
+                <option value={"Duration"}>Duration</option>
+                <option value={"Calories"}>Calories</option>
+                <option value={"Name"}>Name</option>
               </select>
               <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400">
                 <svg className="w-3 h-3 fill-current" viewBox="0 0 20 20">
@@ -115,15 +126,19 @@ const AddedExercises = () => {
         {/* Exercises Content Display Area */}
         {currentList.length > 0 ? (
           <div className="space-y-4">
-            {currentList.map((exercise: IExercise) => (
-              <ExerciseCard key={exercise.id} exercise={exercise} onRemove={removePlan} />
+            {currentList.map((exercise: IExercise, index: number) => (
+              <ExerciseCard 
+                key={`${exercise.id}-${index}`} 
+                exercise={exercise} 
+                onRemove={removePlan} 
+              />
             ))}
           </div>
         ) : (
           /* Empty State Card when list length is 0 */
           <div className="bg-[#181a20] border border-zinc-800/80 rounded-2xl py-16 px-6 flex flex-col items-center justify-center text-center">
             <h2 className="text-lg font-black uppercase tracking-wider text-white">
-              {activeTab === 'today' ? 'NO EXERCISES IN TODAY\'S PLAN' : 'NO SAVED EXERCISES FOUND'}
+              {activeTab === 'today' ? "NO EXERCISES IN TODAY'S PLAN" : 'NO SAVED EXERCISES FOUND'}
             </h2>
             <p className="mt-2 text-xs text-[#8b919d] max-w-sm font-medium leading-relaxed">
               Browse the library and add a lift to get today moving.

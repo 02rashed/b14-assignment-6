@@ -66,6 +66,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
           View Details
         </Link>
 
+        {/* Mark as Done Button */}
         <button
           onClick={() => onMarkAsDone?.(exercise.id)}
           className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#c2f800] text-black text-xs font-bold hover:bg-[#b0e000] transition-colors"
@@ -74,6 +75,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
           <span>Mark as Done</span>
         </button>
 
+        {/* Remove Button (Cross Icon) */}
         <button
           onClick={() => onRemove?.(exercise.id)}
           className="text-zinc-400 hover:text-white p-1 transition-colors ml-1"
