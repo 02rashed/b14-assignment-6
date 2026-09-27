@@ -1,6 +1,6 @@
 import React from 'react';
 import Banner from '@/components/homepage/banner'
-import Exercises from '@/components/homepage/Exercises'
+import Exercises from '@/app/exercises/page'
 const page = () => {
   return (
     <div>
