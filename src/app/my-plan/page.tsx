@@ -1,14 +1,23 @@
 "use client"
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { ExerciseContext } from '@/context/exerciseContex';
 import Link from 'next/link';
+import ExerciseCard from '@/components/exerciseDetails/exerciseCard';
+import { IExercise } from '@/components/types/exercises.type';
 
 const AddedExercises = () => {
-    const { addPlan, saveLater } = useContext(ExerciseContext);
+  const { addPlan = [], saveLater = [], removePlan } = useContext(ExerciseContext);
+  const [activeTab, setActiveTab] = useState<'today' | 'saved'>('today');
 
+  const currentList = activeTab === 'today' ? addPlan : saveLater;
+
+  // Dynamic calculations for stats summary
+  const totalExercises = currentList.length;
+  const totalMinutes = currentList.reduce((acc, item) => acc + (Number(item.duration) || 0), 0);
+  const totalCalories = currentList.reduce((acc, item) => acc + (Number(item.caloriesBurned) || 0), 0);
 
   return (
-    <div className="min-h-screen bg-[#0e0f12] text-white px-4 py-80 flex justify-center">
+    <div className="min-h-screen bg-[#0e0f12] text-white px-4 py-28 flex justify-center">
       <div className="w-full max-w-[1000px] space-y-8">
         
         {/* Header Section */}
@@ -30,7 +39,7 @@ const AddedExercises = () => {
               Exercises
             </span>
             <span className="text-4xl font-black text-[#c2f800]">
-              0
+              {totalExercises}
             </span>
           </div>
 
@@ -40,7 +49,7 @@ const AddedExercises = () => {
               Minutes
             </span>
             <span className="text-4xl font-black text-white">
-              0
+              {totalMinutes}
             </span>
           </div>
 
@@ -50,7 +59,7 @@ const AddedExercises = () => {
               Calories
             </span>
             <span className="text-4xl font-black text-white">
-              0
+              {totalCalories}
             </span>
           </div>
 
@@ -61,10 +70,24 @@ const AddedExercises = () => {
           
           {/* Filter Pills */}
           <div className="inline-flex items-center bg-[#131418] border border-zinc-800/80 p-1 rounded-xl w-fit">
-            <button className="px-4 py-2 text-xs font-bold rounded-lg bg-[#181a20] text-[#c2f800] border border-zinc-800/80 transition-colors">
+            <button
+              onClick={() => setActiveTab('today')}
+              className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
+                activeTab === 'today'
+                  ? 'bg-[#181a20] text-[#c2f800] border border-zinc-800/80'
+                  : 'text-[#8b919d] hover:text-white'
+              }`}
+            >
               Today's Plan
             </button>
-            <button className="px-4 py-2 text-xs font-bold rounded-lg text-[#8b919d] hover:text-white transition-colors">
+            <button
+              onClick={() => setActiveTab('saved')}
+              className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
+                activeTab === 'saved'
+                  ? 'bg-[#181a20] text-[#c2f800] border border-zinc-800/80'
+                  : 'text-[#8b919d] hover:text-white'
+              }`}
+            >
               Saved
             </button>
           </div>
@@ -89,18 +112,28 @@ const AddedExercises = () => {
           </div>
         </div>
 
-        {/* Empty State Card */}
-        <div className="bg-[#181a20] border border-zinc-800/80 rounded-2xl py-16 px-6 flex flex-col items-center justify-center text-center">
-          <h2 className="text-lg font-black uppercase tracking-wider text-white">
-            NOTHING HERE YET
-          </h2>
-          <p className="mt-2 text-xs text-[#8b919d] max-w-sm font-medium leading-relaxed">
-            Browse the library and add a lift to get today moving.
-          </p>
-          <Link href="/exercises" className="mt-6 px-6 py-3 rounded-full bg-[#c2f800] text-black font-extrabold text-xs tracking-wide hover:bg-[#b0e000] transition-colors inline-block">
-            Go to workouts
-          </Link>
-        </div>
+        {/* Exercises Content Display Area */}
+        {currentList.length > 0 ? (
+          <div className="space-y-4">
+            {currentList.map((exercise: IExercise) => (
+              <ExerciseCard key={exercise.id} exercise={exercise} onRemove={removePlan} />
+            ))}
+          </div>
+        ) : (
+          /* Empty State Card when list length is 0 */
+          <div className="bg-[#181a20] border border-zinc-800/80 rounded-2xl py-16 px-6 flex flex-col items-center justify-center text-center">
+            <h2 className="text-lg font-black uppercase tracking-wider text-white">
+              {activeTab === 'today' ? 'NO EXERCISES IN TODAY\'S PLAN' : 'NO SAVED EXERCISES FOUND'}
+            </h2>
+            <p className="mt-2 text-xs text-[#8b919d] max-w-sm font-medium leading-relaxed">
+              Browse the library and add a lift to get today moving.
+            </p>
+            <Link href="/exercises" className="mt-6 px-6 py-3 rounded-full bg-[#c2f800] text-black font-extrabold text-xs tracking-wide hover:bg-[#b0e000] transition-colors inline-block">
+              Go to workouts
+            </Link>
+          </div>
+        )}
+
       </div>
     </div>
   );
