@@ -6,11 +6,7 @@ import ExerciseCard from '@/components/exerciseDetails/exerciseCard';
 import { IExercise } from '@/components/types/exercises.type';
 
 const AddedExercises = () => {
-  const { addPlan = [], saveLater = [], removePlan = () => {} } = useContext(ExerciseContext) as {
-    addPlan?: IExercise[];
-    saveLater?: IExercise[];
-    removePlan?: (exerciseId: string | number) => void;
-  };
+  const { addPlan = [], saveLater = [], removePlan = () => {} } = useContext(ExerciseContext);
   const [activeTab, setActiveTab] = useState<'today' | 'saved'>('today');
   const [sortBy, setSortBy] = useState<"Duration" | "Calories" | "Name">("Duration");  
   const rawList = activeTab === 'today' ? addPlan : saveLater;
@@ -95,8 +91,8 @@ const AddedExercises = () => {
         </div>
         {currentList.length > 0 ? (
           <div className="space-y-4">
-            {currentList.map((exercise: IExercise, index: number) => (
-              <ExerciseCard key={`${exercise.id}-${index}`} exercise={exercise} onRemove={removePlan}/>
+            {currentList.map((exercise, index) => (
+              <ExerciseCard key={`${exercise.id}-${index}`} exercise={exercise as unknown as IExercise} onRemove={removePlan}/>
             ))}
           </div>
         ) : (
