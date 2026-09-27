@@ -7,17 +7,14 @@ import { toast } from "react-toastify";
 
 const AddButton = ({exercise} :{exercise:IExercise}) => {
 
-    const { addPlan, setPlan } = useContext(ExerciseContext) as {
-        addPlan: IExercise[];
-        setPlan: React.Dispatch<React.SetStateAction<IExercise[]>>;
-    };
+    const { addPlan, setPlan } = useContext(ExerciseContext);
 
      const isAlreadyAdded = addPlan.some((item) => item.name === exercise.name);
 
      const handleAddExercise = ( ) => {
          if (isAlreadyAdded) return;
-       setPlan([...addPlan, exercise]) ;
-        toast.success(` ${exercise.name} Added to your Today's plan`);    }
+    setPlan([...addPlan, exercise as unknown as (typeof addPlan)[number]]);
+        toast.success(` ${exercise.name} Added to your Today's plan`);}
     return (
         <button className="flex items-center gap-2 px-5 py-2.5 rounded-full
          bg-[#c2f800] text-black font-semibold text-sm hover:bg-[#b0e000] 
